@@ -12,6 +12,7 @@ from ..stylometry.ai_profiler import generate_ai_profile
 from ..semantic.embeddings import generate_embeddings, centroid
 from ..semantic.topics import extract_topics
 from ..behavior.engine import analyze_behavior
+from ..behavior.human.engine import analyze_human_behavior
 from .evolution import analyze_evolution
 from ..evidence.provenance import create_evidence
 from ..evidence.limitations import generate_limitations
@@ -31,28 +32,47 @@ def build_profile(persona_id: str, posts: list, **kwargs) -> dict:
 
     if not posts:
         return {
+            "investigation_id": investigation_id,
+            "actor_id": actor_id,
+            "run_id": run_id,
+            "session_id": session_id,
             "persona_id": persona_id,
             "corpus_quality": {"posts": 0, "clean_characters": 0, "language": None,
                                "duplicate_ratio": 0.0, "eligible": False,
                                "reasons": ["No posts provided."]},
-            "stylometry": {},
-            "semantic": {},
-            "behavior": {},
+            "stylometry": {
+                "lexical": {}, "function_words": {}, "punctuation": {}, "sentence_structure": {},
+                "character_ngrams": {}, "spelling": {}, "emoji": {}, "syntax": {}
+            },
+            "semantic": {
+                "embedding_model": "all-MiniLM-L6-v2", "corpus_centroid": [], "semantic_similarity": None,
+                "topics": {}, "topic_similarity": None
+            },
+            "behavior": {
+                "temporal": {}, "frequency": {}, "bursts": {}, "inactive_periods": [],
+                "lifecycle": {}, "platform_activity": {}
+            },
+            "human_behavior": {},
+            "ai_profile": {},
             "evolution": {},
             "migration": {},
+            "comparisons": [],
             "evidence": [],
+            "confidence": {},
             "limitations": ["No posts provided for analysis."],
-            "analysis_version": "3.0.0",
-            "corpus_hash": "",
+            "analysis_version": "4.0.0"
         }
 
     # ── Preprocessing ──────────────────────────────────────────────
-    raw_texts = [p.text for p in posts]
-    cleaned = [clean_text(p.text) for p in posts]
+    def get_text(p): return p.text if hasattr(p, 'text') else p.get('text', '')
+    def get_id(p, i): return p.post_id if hasattr(p, 'post_id') else p.get('post_id', str(i))
+
+    raw_texts = [get_text(p) for p in posts]
+    cleaned = [clean_text(get_text(p)) for p in posts]
     combined = "\n".join(x for x in cleaned if x)
 
     # Deduplication
-    post_dicts = [{"post_id": getattr(p, "post_id", str(i)), "text": p.text}
+    post_dicts = [{"post_id": get_id(p, i), "text": get_text(p)}
                   for i, p in enumerate(posts)]
     dedup_result = deduplicate(post_dicts)
     duplicate_ratio = dedup_result.get("duplicate_ratio", 0.0)
@@ -69,14 +89,17 @@ def build_profile(persona_id: str, posts: list, **kwargs) -> dict:
     evidence_items: list[dict] = []
 
     # ── Stylometry ─────────────────────────────────────────────────
-    stylometry_data: dict = {}
+    stylometry_data: dict = {
+        "lexical": {}, "function_words": {}, "punctuation": {}, "sentence_structure": {},
+        "character_ngrams": {}, "spelling": {}, "emoji": {}, "syntax": {}
+    }
+    ai_profile = {}
     if eligible:
         stylometry_data = analyze_style(combined)
 
         # AI-based linguistic profiling (optional, never blocks)
         ai_profile = generate_ai_profile(combined)
         if ai_profile.get("status") not in ("NOT_CONFIGURED", "ERROR"):
-            stylometry_data["ai_analysis"] = ai_profile
             evidence_items.append(create_evidence(
                 category="AI_LINGUISTIC_PROFILE",
                 feature="ai_analysis",
@@ -88,24 +111,35 @@ def build_profile(persona_id: str, posts: list, **kwargs) -> dict:
 
     # ── Semantic analysis ──────────────────────────────────────────
     has_embeddings = False
-    semantic_data: dict = {"post_embeddings_count": 0, "centroid_embedding": []}
+    semantic_data: dict = {
+        "embedding_model": "all-MiniLM-L6-v2", 
+        "corpus_centroid": [], 
+        "semantic_similarity": None,
+        "topics": {}, 
+        "topic_similarity": None
+    }
     if eligible:
         embeddings = generate_embeddings(cleaned)
         if embeddings:
             has_embeddings = True
-            semantic_data = {
-                "post_embeddings_count": len(embeddings),
-                "centroid_embedding": centroid(embeddings),
-            }
+            semantic_data["corpus_centroid"] = centroid(embeddings)
 
     # Topic analysis
-    topics_data: dict = {}
     if eligible and len(cleaned) >= 3:
-        topics_data = extract_topics(cleaned)
-        semantic_data["topics"] = topics_data
+        semantic_data["topics"] = extract_topics(cleaned)
 
     # ── Behavioral analysis ────────────────────────────────────────
-    behavior_data = analyze_behavior(posts)
+    behavior_data = {
+        "temporal": {}, "frequency": {}, "bursts": {}, "inactive_periods": [],
+        "lifecycle": {}, "platform_activity": {}
+    }
+    if eligible:
+        behavior_data = analyze_behavior(posts)
+
+    # ── Human Behavioral analysis ──────────────────────────────────
+    human_behavior_data = {}
+    if eligible:
+        human_behavior_data = analyze_human_behavior(posts, cleaned)
 
     # ── Evolution analysis ─────────────────────────────────────────
     evolution_data: dict = {}
@@ -122,20 +156,23 @@ def build_profile(persona_id: str, posts: list, **kwargs) -> dict:
 
     # ── Assemble profile ───────────────────────────────────────────
     profile = {
-        "persona_id": persona_id,
         "investigation_id": investigation_id,
         "actor_id": actor_id,
         "run_id": run_id,
         "session_id": session_id,
+        "persona_id": persona_id,
         "corpus_quality": quality,
         "stylometry": stylometry_data,
         "semantic": semantic_data,
         "behavior": behavior_data,
+        "human_behavior": human_behavior_data,
+        "ai_profile": ai_profile,
         "evolution": evolution_data,
         "migration": {},
+        "comparisons": [],
         "evidence": evidence_items,
+        "confidence": {},
         "limitations": limitations,
-        "analysis_version": "3.0.0",
-        "corpus_hash": c_hash,
+        "analysis_version": "4.0.0"
     }
     return profile

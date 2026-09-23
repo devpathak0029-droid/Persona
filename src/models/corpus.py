@@ -1,12 +1,15 @@
 from pydantic import BaseModel, Field
 
 class CorpusQuality(BaseModel):
-    posts: int
-    clean_characters: int
-    language: str | None
+    post_count: int
+    character_count: int
     eligible: bool
-    duplicate_ratio: float = 0.0
     reasons: list[str] = Field(default_factory=list)
+    duplicates_removed: int
+    templates_removed: int
+    contamination_detected: bool
+    language: str | None
+    corpus_hash: str
 
 class Corpus(BaseModel):
     corpus_id: str

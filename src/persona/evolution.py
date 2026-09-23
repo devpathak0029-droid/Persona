@@ -53,12 +53,11 @@ def analyze_evolution(posts: List[Any], stylometry_fn=None) -> Dict[str, Any]:
         })
         
     # Compare early vs late on key metrics
-    # avg_word_length, type_token_ratio, mean_sentence_length, question_ratio
     metrics = {
         'avg_word_length': ('lexical', 'avg_word_length'),
         'type_token_ratio': ('lexical', 'type_token_ratio'),
-        'mean_sentence_length': ('sentence_structure', 'mean_length'),
-        'question_ratio': ('punctuation', 'question_ratio') # examples
+        'mean_sentence_length': ('sentence_structure', 'mean_sentence_length'),
+        'question_ratio': ('punctuation', 'question_ratio')
     }
     
     def get_metric(stats, cat, key):
@@ -73,32 +72,45 @@ def analyze_evolution(posts: List[Any], stylometry_fn=None) -> Dict[str, Any]:
     
     for metric_name, (cat, key) in metrics.items():
         early_val = get_metric(early_stats, cat, key)
+        middle_val = get_metric(middle_stats, cat, key)
         late_val = get_metric(late_stats, cat, key)
         
-        if early_val is not None and late_val is not None and early_val != 0:
-            drift = abs(late_val - early_val) / abs(early_val)
-            # normalized drift roughly
-            drift_val = drift
-        elif early_val == 0 and late_val != 0:
-            drift_val = 1.0 # arbitrary large drift
-        elif early_val == 0 and late_val == 0:
-            drift_val = 0.0
-        else:
+        if early_val is None or middle_val is None or late_val is None:
             continue
+            
+        if early_val != 0:
+            drift = (late_val - early_val) / early_val
+        elif late_val > 0:
+            drift = 1.0
+        elif late_val < 0:
+            drift = -1.0
+        else:
+            drift = 0.0
+            
+        if drift > 0.05:
+            direction = 'increasing'
+        elif drift < -0.05:
+            direction = 'decreasing'
+        else:
+            direction = 'stable'
             
         changes.append({
             'feature': metric_name,
-            'early_value': early_val,
-            'late_value': late_val,
-            'drift': drift_val
+            'early': early_val,
+            'middle': middle_val,
+            'late': late_val,
+            'drift': drift,
+            'direction': direction,
+            'evidence': [f"Shifted from {early_val:.2f} to {late_val:.2f}"] if isinstance(early_val, (int, float)) and isinstance(late_val, (int, float)) else []
         })
         
-        if drift_val < 0.10:
+        abs_drift = abs(drift)
+        if abs_drift < 0.10:
             stable_features.append(metric_name)
-        if drift_val > 0.25:
+        if abs_drift > 0.25:
             drift_features.append(metric_name)
             
-        total_drift += min(drift_val, 1.0)
+        total_drift += min(abs_drift, 1.0)
         valid_metrics += 1
         
     overall_drift_score = (total_drift / valid_metrics) if valid_metrics > 0 else 0.0

@@ -1,4 +1,6 @@
-def assess_quality(posts: list, cleaned_texts: list[str], language: str | None, duplicate_ratio: float) -> dict:
+import hashlib
+
+def assess_quality(posts: list, cleaned_texts: list[str], language: str | None, duplicate_ratio: float, duplicates_removed: int = 0, templates_removed: int = 0, contamination_detected: bool = False, corpus_hash: str = "") -> dict:
     """
     Assesses the overall corpus quality and eligibility for stylometric analysis.
     """
@@ -20,11 +22,20 @@ def assess_quality(posts: list, cleaned_texts: list[str], language: str | None, 
         eligible = False
         reasons.append(f"High duplicate ratio: {duplicate_ratio:.2f} (must be < 0.5)")
         
+    if not corpus_hash and cleaned_texts:
+        hasher = hashlib.sha256()
+        for text in cleaned_texts:
+            hasher.update(text.encode('utf-8'))
+        corpus_hash = hasher.hexdigest()
+        
     return {
-        "posts": total_posts,
-        "clean_characters": clean_characters,
-        "language": language,
-        "duplicate_ratio": duplicate_ratio,
+        "post_count": total_posts,
+        "character_count": clean_characters,
         "eligible": eligible,
-        "reasons": reasons
+        "reasons": reasons,
+        "duplicates_removed": duplicates_removed,
+        "templates_removed": templates_removed,
+        "contamination_detected": contamination_detected,
+        "language": language,
+        "corpus_hash": corpus_hash
     }
