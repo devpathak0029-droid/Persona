@@ -19,21 +19,9 @@ def rank_candidates(target_profile: Dict[str, Any], candidate_profiles: List[Dic
     for cand in candidate_profiles:
         comp = compare_profiles(target_profile, cand)
         
-        signals = {
-            'style_similarity': comp['style_similarity'],
-            'semantic_similarity': comp['semantic_similarity'],
-            'topic_similarity': comp['topic_similarity'],
-            'behavioral_association': comp['behavioral_association'],
-            'temporal_association': comp['temporal_association']
-        }
-        
-        weighted_score = (
-            signals['style_similarity'] * weights.get('style', 0.35) +
-            signals['semantic_similarity'] * weights.get('semantic', 0.25) +
-            signals['behavioral_association'] * weights.get('behavioral', 0.2) +
-            signals['topic_similarity'] * weights.get('topic', 0.1) +
-            signals['temporal_association'] * weights.get('temporal', 0.1)
-        )
+        fusion = comp.get('fusion', {})
+        weighted_score = fusion.get('combined_confidence', 0.0)
+        signals = fusion.get('signals', {})
         
         results.append({
             'persona_id': cand.get('persona_id', 'unknown'),

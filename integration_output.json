@@ -979,25 +979,25 @@
       "human_behavior": {
         "signals": [
           {
-            "signal_id": "3fa1ec31-f469-49d0-a11e-33d8d601dc69",
+            "signal_id": "9f42f348-bdd1-419f-8c24-b2970d0cc8e3",
             "category": "identity",
             "signal_type": "ALIAS_REUSE",
             "observations": [
               "Handle 'actor_1' reused across 12 observations."
             ],
             "evidence_ids": [
-              "C12",
-              "C1",
-              "C7",
-              "C2",
-              "C5",
-              "C4",
-              "C6",
-              "C8",
               "C10",
-              "C3",
               "C9",
-              "C11"
+              "C8",
+              "C7",
+              "C5",
+              "C1",
+              "C12",
+              "C3",
+              "C2",
+              "C6",
+              "C11",
+              "C4"
             ],
             "confidence": 0.9,
             "explanation": "Repeated use of the exact handle in the provided dataset.",
@@ -3145,6 +3145,17 @@
             "evidence": [
               "Shifted from 5.71 to 5.71"
             ]
+          },
+          {
+            "feature": "question_ratio",
+            "early": 0.0,
+            "middle": 0.0,
+            "late": 0.14285714285714285,
+            "drift": 1.0,
+            "direction": "increasing",
+            "evidence": [
+              "Shifted from 0.00 to 0.14"
+            ]
           }
         ],
         "stable_features": [
@@ -3152,8 +3163,10 @@
           "type_token_ratio",
           "mean_sentence_length"
         ],
-        "drift_features": [],
-        "overall_drift_score": 0.025796538896975595
+        "drift_features": [
+          "question_ratio"
+        ],
+        "overall_drift_score": 0.2693474041727317
       },
       "migration": {},
       "comparisons": [],
@@ -3178,6 +3191,35 @@
       "topic_similarity": 0.0,
       "behavioral_association": 0.0,
       "temporal_association": 0.0,
+      "fusion": {
+        "signals": {
+          "style_similarity": 0.0,
+          "semantic_similarity": 0.0,
+          "behavioral_association": 0.0,
+          "topic_similarity": 0.0,
+          "temporal_association": 0.0
+        },
+        "weights": {
+          "style_similarity": 0.3,
+          "semantic_similarity": 0.25,
+          "behavioral_association": 0.2,
+          "topic_similarity": 0.15,
+          "temporal_association": 0.1
+        },
+        "combined_confidence": 0.0,
+        "confidence_band": "LOW",
+        "explanation": "Combined confidence of 0.00 (LOW) based on: style_similarity=0.00, semantic_similarity=0.00, behavioral_association=0.00, topic_similarity=0.00, temporal_association=0.00",
+        "evidence_ids": [],
+        "limitations": [
+          "Signal fusion provides analytical confidence, not identity verification.",
+          "Weak individual signals should not be amplified by fusion.",
+          "style_similarity is weak (0.00) and should be interpreted cautiously",
+          "semantic_similarity is weak (0.00) and should be interpreted cautiously",
+          "behavioral_association is weak (0.00) and should be interpreted cautiously",
+          "topic_similarity is weak (0.00) and should be interpreted cautiously",
+          "temporal_association is weak (0.00) and should be interpreted cautiously"
+        ]
+      },
       "explanation": "Comparison based on observable analytical characteristics. Shows temporal overlap, not timezone proof.",
       "evidence_ids": [],
       "limitations": [
@@ -3194,6 +3236,35 @@
       "topic_similarity": 0.0,
       "behavioral_association": 0.0,
       "temporal_association": 0.0,
+      "fusion": {
+        "signals": {
+          "style_similarity": 0.0,
+          "semantic_similarity": 0.0,
+          "behavioral_association": 0.0,
+          "topic_similarity": 0.0,
+          "temporal_association": 0.0
+        },
+        "weights": {
+          "style_similarity": 0.3,
+          "semantic_similarity": 0.25,
+          "behavioral_association": 0.2,
+          "topic_similarity": 0.15,
+          "temporal_association": 0.1
+        },
+        "combined_confidence": 0.0,
+        "confidence_band": "LOW",
+        "explanation": "Combined confidence of 0.00 (LOW) based on: style_similarity=0.00, semantic_similarity=0.00, behavioral_association=0.00, topic_similarity=0.00, temporal_association=0.00",
+        "evidence_ids": [],
+        "limitations": [
+          "Signal fusion provides analytical confidence, not identity verification.",
+          "Weak individual signals should not be amplified by fusion.",
+          "style_similarity is weak (0.00) and should be interpreted cautiously",
+          "semantic_similarity is weak (0.00) and should be interpreted cautiously",
+          "behavioral_association is weak (0.00) and should be interpreted cautiously",
+          "topic_similarity is weak (0.00) and should be interpreted cautiously",
+          "temporal_association is weak (0.00) and should be interpreted cautiously"
+        ]
+      },
       "explanation": "Comparison based on observable analytical characteristics. Shows temporal overlap, not timezone proof.",
       "evidence_ids": [],
       "limitations": [

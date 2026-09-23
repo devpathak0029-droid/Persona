@@ -57,7 +57,7 @@ def analyze_evolution(posts: List[Any], stylometry_fn=None) -> Dict[str, Any]:
         'avg_word_length': ('lexical', 'avg_word_length'),
         'type_token_ratio': ('lexical', 'type_token_ratio'),
         'mean_sentence_length': ('sentence_structure', 'mean_sentence_length'),
-        'question_ratio': ('punctuation', 'question_ratio')
+        'question_ratio': ('sentence_structure', 'question_ratio')
     }
     
     def get_metric(stats, cat, key):

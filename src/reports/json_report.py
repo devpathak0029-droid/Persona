@@ -12,7 +12,7 @@ def generate_json_report(
     """
     corpus_quality = profile.get('corpus_quality', {})
     post_count = corpus_quality.get('post_count', 0)
-    is_eligible = corpus_quality.get('is_eligible', post_count >= 5)
+    is_eligible = corpus_quality.get('eligible', post_count >= 5)
     evidence_count = len(profile.get('evidence', []))
     
     exec_summary = (

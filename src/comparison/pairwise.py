@@ -26,7 +26,8 @@ def compare_profiles(profile_a: dict, profile_b: dict) -> dict:
             semantic_sim = float(cosine_similarity(va, vb)[0][0])
             
     # Topic similarity
-    from src.semantic.topics import topic_overlap
+    from ..semantic.topics import topic_overlap
+    from ..fusion.engine import fuse_signals
     topics_a = profile_a.get('semantic', {}).get('topics', {})
     topics_b = profile_b.get('semantic', {}).get('topics', {})
     topic_overlap_res = topic_overlap(topics_a, topics_b)
@@ -49,6 +50,15 @@ def compare_profiles(profile_a: dict, profile_b: dict) -> dict:
             union = hours_a.union(hours_b)
             temporal_sim = float(len(shared) / len(union)) if union else 0.0
     
+    signals = {
+        'style_similarity': style_sim,
+        'semantic_similarity': semantic_sim,
+        'behavioral_association': beh_sim,
+        'topic_similarity': topic_sim,
+        'temporal_association': temporal_sim
+    }
+    fusion_result = fuse_signals(signals)
+
     return {
         'persona_a': profile_a.get('persona_id', 'A'),
         'persona_b': profile_b.get('persona_id', 'B'),
@@ -57,6 +67,7 @@ def compare_profiles(profile_a: dict, profile_b: dict) -> dict:
         'topic_similarity': topic_sim,
         'behavioral_association': beh_sim,
         'temporal_association': temporal_sim,
+        'fusion': fusion_result,
         'explanation': 'Comparison based on observable analytical characteristics. Shows temporal overlap, not timezone proof.',
         'evidence_ids': [],
         'limitations': ['Associations represent hypotheses, not identity proof.', 'Temporal overlap does not definitively prove same timezone.'],
