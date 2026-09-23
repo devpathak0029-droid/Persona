@@ -1,17 +1,19 @@
 import os
 import json
+from typing import Dict, Any
 
-# This module uses an LLM (like Google Gemini) to perform deep semantic and psychological profiling
-# of a threat actor's writing style, identifying traits that pure statistical stylometry might miss.
-
-def generate_ai_profile(text_corpus: str) -> dict:
+def generate_ai_profile(text_corpus: str) -> Dict[str, Any]:
     """
-    Uses an LLM to generate a deep behavioral and stylometric profile of the author.
+    Generate an AI linguistic profile based on observable linguistic characteristics.
     Requires GEMINI_API_KEY environment variable.
     """
-    api_key = os.environ.get("GEMINI_API_KEY")
+    api_key = os.environ.get('GEMINI_API_KEY')
     if not api_key:
-        return {"error": "GEMINI_API_KEY not configured. Skipping LLM stylistic analysis."}
+        return {
+            'status': 'NOT_CONFIGURED',
+            'provider': 'gemini',
+            'message': 'GEMINI_API_KEY not set. Classical analysis continues without AI augmentation.'
+        }
     
     try:
         from google import genai
@@ -20,18 +22,24 @@ def generate_ai_profile(text_corpus: str) -> dict:
         client = genai.Client(api_key=api_key)
         
         prompt = f"""
-        You are an expert threat intelligence analyst and forensic linguist.
-        Analyze the following text corpus written by a single threat actor.
-        Provide a detailed stylometric and behavioral profile in valid JSON format with the following keys:
-        - "tone": (string) The general tone (e.g., Aggressive, Professional, Skiddie, Paranoid).
-        - "opsec_awareness": (string) High/Medium/Low based on how they talk about security.
-        - "native_language_hints": (string) Any signs of non-native English or regional idioms.
-        - "common_slang": (list of strings) Dark web or hacker slang used.
-        - "motivations": (list of strings) Apparent motivations (e.g., Financial, Ideological, Clout).
-        - "persona_summary": (string) A 2-sentence summary of this actor's linguistic persona.
+        Analyze the following text corpus and identify OBSERVABLE LINGUISTIC characteristics.
+        DO NOT provide any psychological diagnosis, personality types, or statements on motivation.
+        Focus strictly on writing style, vocabulary, and observable patterns.
+
+        Return a JSON object with the following schema:
+        - communication_style: string (e.g., 'formal', 'informal', 'technical', 'conversational')
+        - formality: string ('high', 'medium', 'low')
+        - technical_language: list of strings (technical terms observed)
+        - recurring_terms: list of strings (frequently repeated words/phrases)
+        - slang: list of strings (slang/colloquial terms observed)
+        - language_hints: list of strings (signs of non-native English, regional expressions)
+        - writing_patterns: list of strings (observable patterns like 'uses all caps for emphasis', 'frequent ellipsis')
+        - observable_opsec_language: list of strings (security-related terminology used)
+        - topic_preferences: list of strings (topics frequently discussed)
+        - summary: string (2-sentence factual summary of observable writing characteristics)
         
-        Text Corpus:
-        {text_corpus[:10000]} # Limit context window
+        TEXT CORPUS:
+        {text_corpus[:30000]}
         """
         
         response = client.models.generate_content(
@@ -42,7 +50,17 @@ def generate_ai_profile(text_corpus: str) -> dict:
             ),
         )
         
-        return json.loads(response.text)
+        if not response.text:
+            raise ValueError("Empty response from API.")
+            
+        result = json.loads(response.text)
+        result['status'] = 'SUCCESS'
+        result['provider'] = 'gemini'
+        return result
         
     except Exception as e:
-        return {"error": f"AI Profiling failed: {str(e)}"}
+        return {
+            'status': 'ERROR',
+            'provider': 'gemini',
+            'message': str(e)
+        }

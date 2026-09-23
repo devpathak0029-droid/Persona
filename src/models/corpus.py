@@ -5,6 +5,7 @@ class CorpusQuality(BaseModel):
     clean_characters: int
     language: str | None
     eligible: bool
+    duplicate_ratio: float = 0.0
     reasons: list[str] = Field(default_factory=list)
 
 class Corpus(BaseModel):

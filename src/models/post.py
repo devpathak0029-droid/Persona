@@ -6,6 +6,7 @@ class Post(BaseModel):
     author_id: str | None = None
     platform: str
     text: str
+    raw_text: str | None = None
     timestamp: datetime | None = None
     source_url: str | None = None
     metadata: dict = Field(default_factory=dict)
