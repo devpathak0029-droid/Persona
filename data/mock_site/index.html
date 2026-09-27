@@ -1,0 +1,287 @@
+<!-- Redirect / Direct copy of test_target_raaj7z.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="raaj.7z">
+    <meta name="description" content="Technical notes, decentralized protocols, cryptographic systems, and darknet research by raaj.7z">
+    <meta name="keywords" content="cryptography, darknet, monero, bitcoin, p2p, security research, zero knowledge">
+    <title>0xRAAJ // Cryptographic Engineering & Threat Notes</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #21262d;
+            --border-color: #30363d;
+            --text-main: #c9d1d9;
+            --text-muted: #8b949e;
+            --text-heading: #f0f6fc;
+            --accent-cyan: #58a6ff;
+            --accent-green: #3fb950;
+            --accent-purple: #bc8cff;
+            --accent-orange: #d29922;
+            --accent-red: #f85149;
+            --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-primary); color: var(--text-main); line-height: 1.65; }
+        code, pre, .mono { font-family: 'Fira Code', monospace; }
+        .page-wrapper { max-width: 1240px; margin: 0 auto; padding: 0 20px; }
+        header.site-header { background-color: rgba(22, 27, 34, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 100; }
+        .nav-container { display: flex; justify-content: space-between; align-items: center; height: 70px; }
+        .brand-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text-heading); font-weight: 700; font-size: 1.15rem; }
+        .brand-badge { background: linear-gradient(135deg, #1f6feb, #8957e5); color: white; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
+        .nav-links { display: flex; gap: 24px; list-style: none; }
+        .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.92rem; font-weight: 500; }
+        .nav-links a:hover, .nav-links a.active { color: var(--accent-cyan); }
+        .header-actions { display: flex; align-items: center; gap: 16px; }
+        .onion-indicator { display: inline-flex; align-items: center; gap: 6px; background-color: rgba(63, 185, 80, 0.1); color: var(--accent-green); border: 1px solid rgba(63, 185, 80, 0.3); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+        .pulse-dot { width: 8px; height: 8px; background-color: var(--accent-green); border-radius: 50%; box-shadow: 0 0 8px var(--accent-green); }
+        .main-grid { display: grid; grid-template-columns: 320px 1fr; gap: 36px; margin: 40px 0 80px 0; }
+        aside.sidebar { display: flex; flex-direction: column; gap: 24px; }
+        .profile-card, .widget-card { background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; box-shadow: var(--card-shadow); }
+        .author-header { text-align: center; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); }
+        .avatar-wrapper { position: relative; width: 96px; height: 96px; margin: 0 auto 16px auto; }
+        .avatar-img { width: 100%; height: 100%; border-radius: 50%; background: linear-gradient(135deg, #1f6feb 0%, #238636 50%, #8957e5 100%); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; font-weight: bold; color: white; border: 3px solid var(--border-color); }
+        .online-badge { position: absolute; bottom: 2px; right: 4px; width: 16px; height: 16px; background-color: var(--accent-green); border: 3px solid var(--bg-secondary); border-radius: 50%; }
+        .author-name { font-size: 1.3rem; font-weight: 700; color: var(--text-heading); margin-bottom: 4px; }
+        .author-handle { color: var(--accent-cyan); font-size: 0.88rem; margin-bottom: 12px; }
+        .author-bio { font-size: 0.88rem; color: var(--text-muted); line-height: 1.5; }
+        .info-list { list-style: none; margin-top: 18px; display: flex; flex-direction: column; gap: 12px; font-size: 0.85rem; }
+        .info-item { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+        .info-label { color: var(--text-muted); font-weight: 500; }
+        .info-value { color: var(--text-main); text-align: right; word-break: break-all; }
+        .info-value a { color: var(--accent-cyan); text-decoration: none; }
+        .widget-title { font-size: 0.95rem; font-weight: 600; color: var(--text-heading); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .widget-title::before { content: ''; display: inline-block; width: 4px; height: 14px; background-color: var(--accent-cyan); border-radius: 2px; }
+        .crypto-item { background-color: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; margin-bottom: 12px; }
+        .crypto-item:last-child { margin-bottom: 0; }
+        .crypto-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .crypto-symbol { font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; }
+        .badge-btc { color: #f7931a; }
+        .badge-xmr { color: #ff6600; }
+        .badge-eth { color: #627eea; }
+        .badge-sol { color: #14f195; }
+        .crypto-addr { font-size: 0.72rem; color: var(--text-muted); background-color: rgba(0, 0, 0, 0.3); padding: 6px 8px; border-radius: 4px; word-break: break-all; user-select: all; display: block; }
+        .pgp-box { background-color: #0b0e14; border: 1px solid var(--border-color); border-radius: 6px; padding: 12px; font-size: 0.7rem; color: #7ee787; max-height: 180px; overflow-y: auto; white-space: pre-wrap; word-break: break-all; line-height: 1.4; }
+        main.articles-feed { display: flex; flex-direction: column; gap: 32px; }
+        .feed-header { display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); }
+        .feed-title { font-size: 1.5rem; color: var(--text-heading); font-weight: 700; }
+        .feed-meta { color: var(--text-muted); font-size: 0.85rem; }
+        article.post-card { background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 28px; box-shadow: var(--card-shadow); transition: transform 0.15s ease; }
+        article.post-card:hover { border-color: #444c56; transform: translateY(-2px); }
+        .post-header { margin-bottom: 16px; }
+        .post-tags { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+        .tag { background-color: rgba(88, 166, 255, 0.1); color: var(--accent-cyan); border: 1px solid rgba(88, 166, 255, 0.25); font-size: 0.72rem; font-weight: 500; padding: 3px 8px; border-radius: 4px; text-transform: lowercase; }
+        .tag.alert { background-color: rgba(248, 81, 73, 0.1); color: var(--accent-red); border-color: rgba(248, 81, 73, 0.25); }
+        .post-title { font-size: 1.35rem; font-weight: 700; color: var(--text-heading); line-height: 1.35; margin-bottom: 10px; }
+        .post-title a { color: inherit; text-decoration: none; }
+        .post-title a:hover { color: var(--accent-cyan); }
+        .post-byline { display: flex; align-items: center; gap: 14px; font-size: 0.82rem; color: var(--text-muted); }
+        .post-byline .author-link { color: var(--accent-cyan); font-weight: 600; text-decoration: none; }
+        .post-body { color: var(--text-main); font-size: 0.95rem; line-height: 1.7; margin-bottom: 20px; }
+        .post-body p { margin-bottom: 14px; }
+        .post-body blockquote { border-left: 3px solid var(--accent-purple); padding-left: 16px; margin: 14px 0; color: #d2a8ff; background: rgba(188, 140, 255, 0.05); padding-top: 8px; padding-bottom: 8px; border-radius: 0 6px 6px 0; }
+        .post-body pre { background-color: #0b0e14; border: 1px solid var(--border-color); border-radius: 6px; padding: 14px; overflow-x: auto; font-size: 0.82rem; margin: 14px 0; color: #e6edf3; }
+        .post-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 16px; border-top: 1px solid var(--border-color); font-size: 0.82rem; color: var(--text-muted); }
+        .post-reactions { display: flex; gap: 12px; }
+        .reaction-pill { background-color: var(--bg-tertiary); padding: 4px 10px; border-radius: 16px; border: 1px solid var(--border-color); cursor: pointer; font-size: 0.78rem; }
+        .comments-block { margin-top: 20px; background-color: rgba(13, 17, 23, 0.6); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; }
+        .comments-title { font-size: 0.85rem; font-weight: 600; color: var(--text-heading); margin-bottom: 12px; }
+        .comment-item { padding: 10px 0; border-bottom: 1px solid rgba(48, 54, 61, 0.5); font-size: 0.84rem; }
+        .comment-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .comment-author { font-weight: 600; color: var(--accent-cyan); margin-bottom: 4px; }
+        .comment-author.op { color: var(--accent-green); }
+        footer.site-footer { border-top: 1px solid var(--border-color); padding: 40px 0; color: var(--text-muted); font-size: 0.85rem; background-color: var(--bg-secondary); }
+        .footer-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+        @media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } aside.sidebar { order: 2; } main.articles-feed { order: 1; } }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="page-wrapper nav-container">
+            <a href="#" class="brand-logo">
+                <span class="mono">~/raaj.7z</span>
+                <span class="brand-badge">RESEARCH LAB</span>
+            </a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#posts" class="active">Dispatches</a></li>
+                    <li><a href="#crypto">Crypto Assets</a></li>
+                    <li><a href="#keys">PGP & Identity</a></li>
+                    <li><a href="#onion">Mirrors</a></li>
+                </ul>
+            </nav>
+            <div class="header-actions">
+                <div class="onion-indicator"><span class="pulse-dot"></span><span>ONION ONLINE</span></div>
+            </div>
+        </div>
+    </header>
+
+    <div class="page-wrapper">
+        <div class="main-grid">
+            <aside class="sidebar">
+                <div class="profile-card" id="identity">
+                    <div class="author-header">
+                        <div class="avatar-wrapper">
+                            <div class="avatar-img">R7</div>
+                            <div class="online-badge" title="Active PGP Identity"></div>
+                        </div>
+                        <h1 class="author-name" data-author="raaj.7z">raaj.7z</h1>
+                        <p class="author-handle mono">@raaj7z // ops_core</p>
+                        <p class="author-bio">
+                            Low-level systems architect, P2P protocols engineer, and cryptography researcher. Operating across decentralized privacy networks and air-gapped security enclaves.
+                        </p>
+                    </div>
+
+                    <ul class="info-list mono">
+                        <li class="info-item"><span class="info-label">Alias:</span><span class="info-value">raaj.7z / raaj7z</span></li>
+                        <li class="info-item"><span class="info-label">Telegram:</span><span class="info-value"><a href="https://t.me/raaj7z_ops" target="_blank">@raaj7z_ops</a></span></li>
+                        <li class="info-item"><span class="info-label">ProtonMail:</span><span class="info-value">raaj7z.intel@proton.me</span></li>
+                        <li class="info-item"><span class="info-label">XMPP:</span><span class="info-value">raaj7z@xmpp.is</span></li>
+                        <li class="info-item"><span class="info-label">Session ID:</span><span class="info-value">05a4e9b81f33c09e992147dca81f4219b1836a5323a67d</span></li>
+                        <li class="info-item"><span class="info-label">Primary Onion:</span><span class="info-value">raaj7zlabz257x4yq75zoprmk2w7fvq7h25l9p4l4z.onion</span></li>
+                    </ul>
+                </div>
+
+                <div class="widget-card" id="crypto">
+                    <h2 class="widget-title">Crypto Assets & Addresses</h2>
+                    
+                    <div class="crypto-item">
+                        <div class="crypto-header">
+                            <span class="crypto-symbol badge-btc mono">₿ Bitcoin (BTC)</span>
+                            <span class="tag">SegWit</span>
+                        </div>
+                        <code class="crypto-addr" data-coin="BTC">bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq</code>
+                    </div>
+
+                    <div class="crypto-item">
+                        <div class="crypto-header">
+                            <span class="crypto-symbol badge-xmr mono">ɱ Monero (XMR)</span>
+                            <span class="tag">Primary</span>
+                        </div>
+                        <code class="crypto-addr" data-coin="XMR">888tNkZrPN6JsEgekjMnABU4TBzc2Dt29EPAvkFxbANsAnJYPbb3iQ1YBRk1UXcdRsiKc9dhwMVgN5S9cQUiyoogDavup3H</code>
+                    </div>
+
+                    <div class="crypto-item">
+                        <div class="crypto-header">
+                            <span class="crypto-symbol badge-eth mono">Ξ Ethereum / ERC20</span>
+                            <span class="tag">USDT</span>
+                        </div>
+                        <code class="crypto-addr" data-coin="ETH">0x71C8364f3B7382Ff22495d4Ac986221544B9E345</code>
+                    </div>
+
+                    <div class="crypto-item">
+                        <div class="crypto-header">
+                            <span class="crypto-symbol badge-sol mono">◎ Solana (SOL)</span>
+                            <span class="tag">SPL</span>
+                        </div>
+                        <code class="crypto-addr" data-coin="SOL">7v91Nbd8iQSwvR2jXj3XkXF8kFmN4G9pW6JkUvY3p7uD</code>
+                    </div>
+                </div>
+
+                <div class="widget-card" id="keys">
+                    <h2 class="widget-title">PGP Signature Block</h2>
+                    <p style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 8px;">
+                        Fingerprint: <code class="mono" style="color: var(--accent-orange);">4F8E 9A12 C7B3 0D65 2E81 99FA 8B7C 134D RAAJ 7Z00</code>
+                    </p>
+                    <pre class="pgp-box">-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: OpenPGP.js v4.10.10
+Comment: https://raaj7z.dev/keys
+
+mQGNBF/9qZ0BDAC5f9e8712398401923847120938471029348710293847102
+93847102938471209384710293847102938471029384710293847102938471
+02938471029384710293847102938471029384710293847102938471029384
+71029384710293847102938471029384710293847102938471029384710293
+84710293847102938471029384710293847102938471029384710293847102
+93847102938471029384710293847102938471029384710293847102938471
+02938471029384710293847102938471029384710293847102938471029384
+=RAAJ
+-----END PGP PUBLIC KEY BLOCK-----</pre>
+                </div>
+            </aside>
+
+            <main class="articles-feed" id="posts">
+                <div class="feed-header">
+                    <div>
+                        <h2 class="feed-title">Latest Publications & Field Notes</h2>
+                        <span class="feed-meta">Observing cryptographic integrity, traffic correlation & protocol exploits</span>
+                    </div>
+                    <span class="mono" style="font-size: 0.85rem; color: var(--accent-cyan);">5 Dispatches</span>
+                </div>
+
+                <article class="post-card" id="post-105" data-post-id="raaj_post_105" data-author="raaj.7z" data-timestamp="2026-03-12T02:45:00Z">
+                    <div class="post-header">
+                        <div class="post-tags"><span class="tag">darknet-routing</span><span class="tag">tor-v3</span><span class="tag">traffic-analysis</span></div>
+                        <h3 class="post-title"><a href="#post-105">Analyzing Ephemeral Hidden Services & Onion Routing Node Behaviors</a></h3>
+                        <div class="post-byline">
+                            <span>Author: <a href="#identity" class="author-link">raaj.7z</a></span> • <time datetime="2026-03-12T02:45:00Z">March 12, 2026 at 02:45 UTC</time> • <span>Platform: Darknet Node Mirror</span>
+                        </div>
+                    </div>
+                    <div class="post-body">
+                        <p>Hey everyone, tbh I think we need to look into this routing anomaly much more deeply. FYI the previous onion rendezvous descriptor caching method was highly unstable and caused several issues during our multi-hop stress tests. Can we try an alternative approach? It is imperative that we get this right before deployment across the relay cluster.</p>
+                        <p>During our passive packet timing correlation tests on middle relays, we observed reproducible microsecond latency patterns when processing burst streams. If an adversary controls both an entry guard and exit node, flow watermarking can theoretically narrow deanonymization candidates down significantly.</p>
+                        <blockquote>"Never rely on a single guard relay for long-term critical operations. Rotate circuits with strict isolation policies."</blockquote>
+                        <p>I have pushed our telemetry collector script to the mirror. Check the PGP-signed hash before executing. Let me know what you think about the latency benchmarks! :)</p>
+                    </div>
+                    <div class="post-footer">
+                        <div class="post-reactions"><span class="reaction-pill">⚡ 24 ACK</span><span class="reaction-pill">🔒 Verified PGP</span></div>
+                        <span class="mono">ID: #DISPATCH-105</span>
+                    </div>
+                </article>
+
+                <article class="post-card" id="post-104" data-post-id="raaj_post_104" data-author="raaj.7z" data-timestamp="2026-02-28T03:15:00Z">
+                    <div class="post-header">
+                        <div class="post-tags"><span class="tag">monero</span><span class="tag">ring-signatures</span><span class="tag">opsec</span></div>
+                        <h3 class="post-title"><a href="#post-104">Cold Storage Ops: Multi-Sig Key Generation across Air-Gapped Arch Nodes</a></h3>
+                        <div class="post-byline">
+                            <span>Author: <a href="#identity" class="author-link">raaj.7z</a></span> • <time datetime="2026-02-28T03:15:00Z">February 28, 2026 at 03:15 UTC</time> • <span>Platform: Darknet Node Mirror</span>
+                        </div>
+                    </div>
+                    <div class="post-body">
+                        <p>Hello again, tbh we must reconsider the key generation architecture for multi-sig vault settlements. FYI the latency on air-gapped QR transaction signing is still acceptable, but I noticed recurring deserialization bugs in the legacy wallet wrapper. Has anyone found a clean workaround for this? It is imperative that it works securely without leaking change addresses.</p>
+                        <pre class="mono">monero-wallet-cli --wallet-file vault_node1.keys --export-key-images key_images.raw
+sha256sum key_images.raw | gpg --clearsign -u 4F8E9A12</pre>
+                        <p>Do not transfer key images over unencrypted USB drives without wipe cycles. Always zeroize RAM buffers post-signing.</p>
+                    </div>
+                    <div class="post-footer">
+                        <div class="post-reactions"><span class="reaction-pill">🔐 42 Saved</span></div>
+                        <span class="mono">ID: #DISPATCH-104</span>
+                    </div>
+                </article>
+
+                <article class="post-card" id="post-103" data-post-id="raaj_post_103" data-author="raaj.7z" data-timestamp="2026-01-19T02:10:00Z">
+                    <div class="post-header">
+                        <div class="post-tags"><span class="tag">reverse-engineering</span><span class="tag">malware-analysis</span></div>
+                        <h3 class="post-title"><a href="#post-103">Dissecting Custom C2 Beaconing Protocols & Memory Injection Hooks</a></h3>
+                        <div class="post-byline">
+                            <span>Author: <a href="#identity" class="author-link">raaj.7z</a></span> • <time datetime="2026-01-19T02:10:00Z">January 19, 2026 at 02:10 UTC</time>
+                        </div>
+                    </div>
+                    <div class="post-body">
+                        <p>tbh the custom packer we analyzed yesterday was deceptively straightforward once we unpacked the second-stage payload in x64dbg. FYI the loader abuses early bird APC injection inside svchost.exe before establishing TLS communication with an obscure bulletproof host.</p>
+                        <p>Reach out on Session (05a4e9b8...) or Jabber if you need access to the raw samples. Stay safe! -- raaj.7z</p>
+                    </div>
+                    <div class="post-footer">
+                        <div class="post-reactions"><span class="reaction-pill">🔬 18 Analyzed</span></div>
+                        <span class="mono">ID: #DISPATCH-103</span>
+                    </div>
+                </article>
+            </main>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="page-wrapper footer-content">
+            <p class="mono">0xRAAJ // Cryptographic Engineering Blog • raaj.7z</p>
+            <p class="mono">Onion Mirror: ONLINE</p>
+        </div>
+    </footer>
+</body>
+</html>
